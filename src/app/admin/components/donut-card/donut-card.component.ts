@@ -10,15 +10,15 @@ import {Donut} from "../../model/donut.model";
             'donut-card-new': !donut.promo
          }"
      >
-      <img src="/assets/img/{{donut?.icon}}.svg"
-           alt="{{donut?.name}}"
+      <img src="/assets/img/{{donut.icon}}.svg"
+           alt="{{donut.name}}"
            class="donut-card-icon">
       <div>
         <p class="donut-card-name">
-          {{donut?.name}}
+          {{donut.name}}
         </p>
         <p class="donut-card-price">
-          {{donut?.price}}
+          {{donut.price / 100 | currency: 'GBP'}}
         </p>
       </div>
     </div>
