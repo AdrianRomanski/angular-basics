@@ -5,16 +5,22 @@ import {Donut} from "../../model/donut.model";
 @Component({
   selector: 'app-donut-list',
   template: `
-    <app-donut-card [donut]="donuts[0]"></app-donut-card>
-    <app-donut-card [donut]="donuts[1]"></app-donut-card>
-    <app-donut-card [donut]="donuts[2]"></app-donut-card>
-  `,
+<!--    ng-template [ngIf]=donuts.length-->
+    <ng-container *ngIf="donuts.length; else nothing">
+      <app-donut-card  *ngFor="let donut of donuts; trackBy: trackById"
+                       [donut]="donut">
+      </app-donut-card>
+    </ng-container>
+    <ng-template #nothing>
+      <p>No Donuts here...</p>
+    </ng-template>
+ `,
   styles: [
     `
     `
   ]
 })
-export class DonutListComponent implements OnInit{
+export class DonutListComponent implements OnInit {
   donuts: Donut[] = [];
 
   constructor() {
@@ -47,4 +53,7 @@ export class DonutListComponent implements OnInit{
     ];
   }
 
+  trackById(index: number, value: Donut) {
+    console.log(index, value);
+  }
 }
