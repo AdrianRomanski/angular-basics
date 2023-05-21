@@ -1,11 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {Donut} from "../../model/donut.model";
+import {DonutService} from "../../services/donut.service";
 
 @Component({
   selector: 'app-donut-single',
   template: `
     <div>
-      <app-donut-form [donut]=donut (create)="onCreate($event)"></app-donut-form>
+      <app-donut-form [donut]=donut
+                      (create)="onCreate($event)"
+                      (update)="onUpdate($event)"
+                      (delete)="onDelete($event)">
+      </app-donut-form>
     </div>
   `,
   styles: [
@@ -15,19 +20,23 @@ export class DonutSingleComponent implements OnInit{
 
   donut!: Donut;
 
+  constructor(private donutService: DonutService) {
+  }
+
   ngOnInit(): void {
-    this.donut = {
-      id: 'y331251',
-      name: 'Just Chocolate',
-      icon: 'just-chocolate',
-      price: 119,
-      promo: 'new',
-      description: 'For the pure chocoholic'
-    };
+    const id = 'y331251';
+    this.donut = this.donutService.readOne(id);
   }
 
   onCreate(donut: Donut) {
-    console.log('onCreate', donut);
+    this.donutService.create(donut);
   }
 
+  onUpdate(donut: Donut) {
+    this.donutService.update(donut);
+  }
+
+  onDelete(donut: Donut) {
+    this.donutService.delete(donut);
+  }
 }
