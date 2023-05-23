@@ -9,6 +9,7 @@ import { DonutSingleComponent } from './containers/donut-single/donut-single.com
 // components
 import { DonutCardComponent } from './components/donut-card/donut-card.component';
 import { DonutFormComponent } from './components/donut-form/donut-form.component';
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DonutFormComponent } from './components/donut-form/donut-form.component
   ],
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ]
 })
 export class AdminModule { }

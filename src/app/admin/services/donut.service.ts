@@ -1,73 +1,92 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Donut} from "../model/donut.model";
+import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
+import {catchError, delay, map, of, retry, retryWhen, take, tap, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class DonutService {
 
-  private donuts: Donut[] = [
-    {
-      id: 'y331251',
-      name: 'Just Chocolate',
-      icon: 'just-chocolate',
-      price: 119,
-      promo: 'new',
-      description: 'For the pure chocoholic'
-    },
-    {
-      id: 'y331252',
-      name: 'Glazed Fudge',
-      icon: 'glazed-fudge',
-      price: 129,
-      promo: 'limited',
-      description: 'Sticky perfection'
-    },
-    {
-      id: 'y331251',
-      name: 'Caramel Swirl',
-      icon: 'caramel-swirl',
-      price: 159,
-      description: 'Chocolate drizzled with caramel'
-    },
-    {
-      id: 'y33fdsa1251',
-      name: 'Sour Supreme',
-      icon: 'sour-supreme',
-      price: 139,
-      description: 'For the sour advocate.'
-    },
-    {
-      id: 'y3fsafs31251',
-      name: 'Zesty Lemon',
-      icon: 'zesty-lemon',
-      price: 129,
-      description: 'Delicious luscious lemon'
-    }
-  ];
+  private donuts: Donut[] = [];
 
-  constructor() { }
-
-  read(): Donut[] {
-    return this.donuts;
+  constructor(private http: HttpClient) {
   }
 
-  readOne(id: string): Donut {
-    const donut = this.read().find((d: Donut) => d.id === id);
-    return donut ? donut : {name: '', icon: '', price: 0, description: ''}
+  read() {
+    if (this.donuts.length) {
+      return of(this.donuts);
+    }
+
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
+    headers = headers.append('Api-Token', '1234abcd');
+
+    const options = {
+      headers
+    };
+
+    return this.http.get<Donut[]>(`/api/donuts`, options)
+      .pipe(
+        tap((donuts) => console.log(donuts)),
+        retryWhen((errors) =>
+           errors.pipe(
+            delay(1000),
+            take(3)
+          )
+        ),
+        catchError(this.handleError)
+      )
+  }
+
+  readOne(id: string) {
+    return this.read().pipe(
+      map((donuts: Donut[]) => {
+        const donut = donuts.find((d: Donut) => d.id === id);
+        return donut ? donut : {name: '', icon: '', price: 0, description: ''}
+      }),
+      catchError(this.handleError)
+    )
   }
 
   create(payload: Donut) {
-    this.donuts = [...this.donuts, payload];
+    return this.http.post<Donut>(`/api/donuts`, payload)
+      .pipe((
+        tap((donut: Donut) => this.donuts = [...this.donuts, donut]),
+        catchError(this.handleError))
+      );
   }
 
   update(payload: Donut) {
-    this.donuts = this.donuts.map((d: Donut) => {
-      return d.id === payload.id ? payload : d;
-    })
+    return this.http.put<Donut>(`/api/donuts/${payload.id}`, payload)
+      .pipe((
+        tap((donut: Donut) => {
+          this.donuts = this.donuts.map((d: Donut) => {
+            return d.id === donut.id ? donut : d;
+          });
+        }),
+        catchError(this.handleError)
+      ))
   }
 
   delete(payload: Donut) {
-    this.donuts = this.donuts.filter((donut: Donut) => donut.id !== payload.id);
+    return this.http
+      .delete<Donut>(`/api/donuts/${payload.id}`)
+      .pipe((
+        tap(() => {
+          this.donuts = this.donuts.filter((donut: Donut) => donut.id !== payload.id);
+        })))
+  }
+
+  private handleError(err: HttpErrorResponse) {
+    if(err.error instanceof ErrorEvent) {
+      // client side - angular application throwing error
+      console.warn('Client', err.message);
+    } else {
+      console.warn('Server', err.message);
+      // server-side - backend throwing error
+    }
+    return throwError(() => Error(err.message));
   }
 }

@@ -24,19 +24,29 @@ export class DonutSingleComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    const id = 'y331251';
-    this.donut = this.donutService.readOne(id);
+   this.donutService
+      .readOne('y331251')
+      .subscribe((donut) => this.donut = donut);
   }
 
   onCreate(donut: Donut) {
-    this.donutService.create(donut);
+    this.donutService
+      .create(donut)
+      .subscribe(() => console.log('Created successfully'));
   }
 
   onUpdate(donut: Donut) {
-    this.donutService.update(donut);
+    this.donutService
+      .update(donut)
+      .subscribe({
+        next: () => console.log('Updated successfully!'),
+        error: (err) => console.log('onUpdate error', err),
+      });
   }
 
   onDelete(donut: Donut) {
-    this.donutService.delete(donut);
+    this.donutService
+      .delete(donut)
+      .subscribe(() => console.log('Deleted successfully!'));
   }
 }
