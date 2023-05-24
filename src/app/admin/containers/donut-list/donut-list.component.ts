@@ -6,7 +6,13 @@ import {DonutService} from "../../services/donut.service";
 @Component({
   selector: 'app-donut-list',
   template: `
-<!--    ng-template [ngIf]=donuts.length-->
+
+    <div class="donut-list-action">
+      <a routerLink="new" class="btn btn--green">
+        New Donut
+        <img src="/assets/img/icon/plus.svg">
+      </a>
+    </div>
     <ng-container *ngIf="donuts?.length; else nothing">
       <app-donut-card  *ngFor="let donut of donuts; trackBy: trackById"
                        [donut]="donut">
@@ -34,7 +40,7 @@ import {DonutService} from "../../services/donut.service";
     </ng-template>
  `,
   styles: [
-    `
+    `.donut-list {&-actions {margin-bottom: 10px;}}
     `
   ]
 })
