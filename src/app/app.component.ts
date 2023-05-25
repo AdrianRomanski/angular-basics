@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {RouterOutlet} from "@angular/router";
 
 @Component({
+  standalone: true,
   selector: 'app-root',
   template: `
     <div class="app">
@@ -21,17 +23,22 @@ import { Component, OnInit } from '@angular/core';
         padding: 25px;
         border: 4px solid #ef9fc7;
       }
+
       .header {
         display: flex;
         justify-content: center;
         margin-bottom: 25px;
       }
+
       .logo {
         width: 100px;
         height: 88px;
       }
     `,
   ],
+  imports: [
+    RouterOutlet
+  ]
 })
 export class AppComponent implements OnInit {
   message: string = 'Hello Angular!'

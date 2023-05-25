@@ -1,11 +1,7 @@
-import {Injectable} from '@angular/core';
 import {Donut} from "../model/donut.model";
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
-import {catchError, delay, map, of, retry, retryWhen, take, tap, throwError} from "rxjs";
+import {catchError, delay, map, of, retryWhen, take, tap, throwError} from "rxjs";
 
-@Injectable({
-  providedIn: 'root'
-})
 export class DonutService {
 
   private donuts: Donut[] = [];
